@@ -100,7 +100,8 @@ submit_extract <- submit_extract(extract_state_pop_status)
 wait_extract <- wait_for_extract(submit_extract)
 download_file <- download_extract(wait_extract)
 
-
+# 4. Read Zip into a data fram
+state_pop_data <- read_nhgis(download_file)
 
 ```
 
