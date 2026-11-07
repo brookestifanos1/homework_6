@@ -6,21 +6,20 @@ format:
 editor: visual
 ---
 
-```{r setup, include=FALSE}
+```{r}
+#| include: false
+#| message: false
+#| warning: false
 knitr::opts_chunk$set(echo       = TRUE, 
                       fig.height = 3, 
                       fig.width  = 6,
                       fig.align  = "center")
 ggplot2::theme_set(ggplot2::theme_bw())
-```
 
-```{r setup, include=FALSE, message=FALSE, warning=FALSE}
-  if (!require("pacman")) install.packages("pacman")
+if (!require("pacman")) install.packages("pacman")
 
- if (!requireNamespace("ipumsr", quietly = TRUE)) {
+if (!requireNamespace("ipumsr", quietly = TRUE))
   install.packages("ipumsr")
- }
-
 
 # Load contributed packages with pacman
 pacman::p_load(rvest,  tidyverse, xml2)
@@ -37,18 +36,23 @@ The U.S. Census Bureau's 1990 API endpoint is currently offline. To access 1990 
 **Task:** Register at [nhgis.org](https://uma.pop.umn.edu/nhgis/user/new), generate an API key at [account.ipums.org](https://account.ipums.org), and set it in your R environment.
 
 ```{r}
+#| message: false
 
 # Load the package into the session
 library(ipumsr)
-```
 
-``` r
+# Set API key 
+usethis::use_git_ignore(".Renviron")
+usethis::edit_r_environ()
+
+#Retrieve the key in R 
+ipums_key <- Sys.getenv("IPUMS_API_KEY")
+
+#check whether R found it, run:
+
+ipums_key != ""
 
 
-
-
-# Set your API key (run this once)
-# set_ipums_api_key("PASRE_YOUR_KEY_HERE", save = TRUE)
 ```
 
 ### Part 2: The Data Challenge
@@ -73,7 +77,8 @@ To complete this, you will need to utilize these key functions from the `{ipumsr
 
 - `read_nhgis()`: Loads the downloaded data into a data frame.
 
-``` r
+```{r}
+
 #| label: extract-data
 
 # 1. Define
