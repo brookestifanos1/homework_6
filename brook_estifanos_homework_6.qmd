@@ -92,6 +92,9 @@ extract_state_pop_status <- define_extract_agg(
   )
 )
 
+# 2. Submit
+submit_extract <- submit_extract(extract_state_pop_status)
+
 
 ```
 
