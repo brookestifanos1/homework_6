@@ -14,8 +14,13 @@ knitr::opts_chunk$set(echo       = TRUE,
 ggplot2::theme_set(ggplot2::theme_bw())
 ```
 
-```{r}
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
   if (!require("pacman")) install.packages("pacman")
+
+ if (!requireNamespace("ipumsr", quietly = TRUE)) {
+  install.packages("ipumsr")
+ }
+
 
 # Load contributed packages with pacman
 pacman::p_load(rvest,  tidyverse, xml2)
@@ -31,8 +36,15 @@ The U.S. Census Bureau's 1990 API endpoint is currently offline. To access 1990 
 
 **Task:** Register at [nhgis.org](https://uma.pop.umn.edu/nhgis/user/new), generate an API key at [account.ipums.org](https://account.ipums.org), and set it in your R environment.
 
-``` r
+```{r}
+
+# Load the package into the session
 library(ipumsr)
+```
+
+``` r
+
+
 
 
 # Set your API key (run this once)
