@@ -96,6 +96,12 @@ extract_state_pop_status <- define_extract_agg(
 submit_extract <- submit_extract(extract_state_pop_status)
 
 
+# 3. Wait & Download extract
+wait_extract <- wait_for_extract(submit_extract)
+download_file <- download_extract(wait_extract)
+
+
+
 ```
 
 ### Part 3: Data Cleaning
