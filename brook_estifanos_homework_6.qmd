@@ -270,10 +270,37 @@ That said, you can make it slightly more precise and a bit more “data‑scienc
 
     - Replace any `"—"` or `"__"` or similar placeholders with `NA`.
 
+    ```{r}
+
+
+    pop_rank_4 <- pop_rank_3 |> 
+      # Replace common placeholder strings with true R NAs across your character columns
+      mutate(across(where(is.character), ~ na_if(.x, "-"))) %>%
+      mutate(across(where(is.character), ~ na_if(.x, "N/A"))) %>%
+      mutate(across(where(is.character), ~ na_if(.x, "")))
+    ```
+
 5.  (Optional but useful)
 
     - Remove commas from numbers.
 
     - Check for duplicated rows.
 
-    - Verify that the number of rows matches the number of U.S. states + territories.
+    - Verify that the number of rows matches the number of U.S. states + territories
+
+    ```{r}
+
+    #find any completely identical duplicate rows
+    duplicated_rows <- pop_rank_4 |> 
+      get_dupes()
+
+    # check total number of rows
+    total_rows <- nrow( pop_rank_4)
+    print(total_rows)
+
+    #remove last 4 raws that are not US state or territory
+    pop_rank_tidy <- pop_rank_4 |> 
+      slice(-(57:60))
+
+
+    ```
