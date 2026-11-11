@@ -202,12 +202,6 @@ That said, you can make it slightly more precise and a bit more “data‑scienc
 
     - Ensure you select the correct table (the page contains multiple tables).
 
-2.  Clean and standardize the data
-
-    - Fix column names so they are syntactically valid and descriptive (e.g., using `janitor::clean_names()`).
-
-    - Ensure the first row is treated as column headers, not data
-
     ```{r}
 
     #load library
@@ -222,7 +216,34 @@ That said, you can make it slightly more precise and a bit more “data‑scienc
       html_table(header = TRUE) %>%            # scrapes all tables      
       .[[1]] %>%                              # selects the first table
       as_tibble(.name_repair = "unique") |>   # fixes empty column names
-      clean_names()                           # coleans to snake_case      
+      clean_names()                           # oleans to snake_case      
+    ```
+
+2.  Clean and standardize the data
+
+    - Fix column names so they are syntactically valid and descriptive (e.g., using `janitor::clean_names()`).
+
+    - Ensure the first row is treated as column headers, not data
+
+    ```{r}
+
+    colnames(pop_rank_raw)
+
+    pop_rank_2 <- pop_rank_raw |> 
+      slice(-1) |> 
+      rename (
+        rank = x1, 
+        state = state_or_territory,
+        total_pop_2025 = census_population_8_9_a_3,
+        total_pop_2020 = census_population_8_9_a_4,
+        house_seats = house_seats_b_5, 
+        pct_seats = house_seats_b_6, 
+        pop_per_seat_2020 = pop_perseat_2020_a, 
+        pop_per_ev_2020 = pop_perelec_vote_2020_c, 
+        pct_us_pop_2020 =  percent_us_2020, 
+        pct_ec_2020 = percent_ec_2020
+        
+      )
     ```
 
 3.  Correct column classes
@@ -232,6 +253,10 @@ That said, you can make it slightly more precise and a bit more “data‑scienc
     - Convert rank columns to integers.
 
     - Convert state/territory names to character.
+
+    ```{r}
+
+    ```
 
 4.  Handle missing values
 
