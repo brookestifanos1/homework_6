@@ -155,6 +155,16 @@ tidy_state_pop <- raw_state_pop |>
 
 population density = total population/ land area
 
+```{r}
+
+#use mutate to calculate population density, land_area convereted to numeric 
+
+state_density <- tidy_state_pop |>
+                  mutate(
+                    pop_density = total_pop / as.numeric(land_area))
+
+```
+
 ### Part 5: Find Water Share
 
 water share = water area /(land area + water area)
