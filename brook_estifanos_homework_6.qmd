@@ -227,8 +227,10 @@ That said, you can make it slightly more precise and a bit more “data‑scienc
 
     ```{r}
 
+    #look up colnames for reference
     colnames(pop_rank_raw)
 
+    # remove first raw and rename columns
     pop_rank_2 <- pop_rank_raw |> 
       slice(-1) |> 
       rename (
@@ -256,6 +258,12 @@ That said, you can make it slightly more precise and a bit more “data‑scienc
 
     ```{r}
 
+    # covert rank to integer and all but the state names as numeric.
+    pop_rank_3 <- pop_rank_2 |> 
+                  mutate(
+                   rank = as.integer(rank),
+                   across(3:10, ~ parse_number(.x))
+      )
     ```
 
 4.  Handle missing values
