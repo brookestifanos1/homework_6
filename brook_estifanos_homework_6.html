@@ -2274,10 +2274,73 @@ vertical-align: -.125em;
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: extract-data</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Define</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Submit</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Wait &amp; Download</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Read</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Define function</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>extract_state_pop_status <span class="ot">&lt;-</span> <span class="fu">define_extract_agg</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">&quot;nhgis&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">description =</span> <span class="st">&quot;1990 State Total Population (NP1)&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">datasets =</span> <span class="fu">ds_spec</span>(</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;1990_STF1&quot;</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_tables =</span> <span class="st">&quot;NP1&quot;</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">geog_levels =</span> <span class="st">&quot;state&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Submit</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>submit_extract <span class="ot">&lt;-</span> <span class="fu">submit_extract</span>(extract_state_pop_status)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Successfully submitted IPUMS NHGIS extract number 4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Wait &amp; Download extract</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>wait_extract <span class="ot">&lt;-</span> <span class="fu">wait_for_extract</span>(submit_extract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Checking extract status...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Waiting 10 seconds...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Checking extract status...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Waiting 20 seconds...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Checking extract status...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>IPUMS NHGIS extract 4 is ready to download.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>download_file <span class="ot">&lt;-</span> <span class="fu">download_extract</span>(wait_extract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Data file saved to C:/Users/estif/OneDrive/Documents/Data613/homework/homework_6/nhgis0004_csv.zip</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Read Zip into a data fram</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>state_pop_data <span class="ot">&lt;-</span> <span class="fu">read_nhgis</span>(download_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: `read_nhgis()` was deprecated in ipumsr 0.9.0.
+ℹ Please use `read_ipums_agg()` instead.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Use of data from IPUMS NHGIS is subject to conditions including that users should cite the data appropriately. Use command `ipums_conditions()` for more details.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 51 Columns: 38
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: &quot;,&quot;
+chr  (9): GISJOIN, STUSAB, STATE, STATEA, AREALAND, AREAWAT, ANPSADPI, FUNCS...
+dbl  (6): YEAR, DIVISIONA, REGIONA, INTPTLAT, INTPTLNG, ET1001
+lgl (23): ANRCA, AIANHHA, RES_ONLYA, TRUSTA, AIANCC, RES_TRSTA, BLOCKA, BLCK...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
 </div>
 </section>
 </section>
