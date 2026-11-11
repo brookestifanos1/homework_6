@@ -88,6 +88,8 @@ download_file <- download_extract(wait_extract)
 #read Zip into a data frame
 raw_state_pop <- read_nhgis(download_file)
 
+raw_state_pop
+
 ```
 
 ## Part 3: Data Cleaning
@@ -98,7 +100,7 @@ I used **dplyr** functions **select** and **rename** to clean the data. I notice
 
 ```{r}
 # use var info to check var names
-ipums_var_info(state_pop_data)
+ipums_var_info(raw_state_pop)
 
 #select and rename
 tidy_state_pop <- raw_state_pop |> 
@@ -113,6 +115,7 @@ tidy_state_pop <- raw_state_pop |>
                            land_area = AREALAND,
                            water_area = AREAWAT,
                            total_pop = ET1001)
+tidy_state_pop
 ```
 
 ## Part 4: Find the population density
@@ -128,9 +131,12 @@ state_density <- tidy_state_pop |>
                   mutate(land_area = as.numeric(land_area), 
                     pop_density = total_pop /land_area)
                   
-                    
-
-
+state_density |> select(year, 
+                        state_name, 
+                        land_area, 
+                        total_pop, 
+                        pop_density) |> 
+                  head(10)
 ```
 
 ## Part 5: Find Water Share
@@ -146,6 +152,12 @@ water_share <- state_density |>
                   water_area = as.numeric(water_area), 
                   water_share = (water_area)/(land_area + water_area)
                 )
+water_share |> select(year, 
+                        state_name, 
+                        land_area, 
+                        water_area, 
+                        water_share) |> 
+                head(10)
 ```
 
 # Section 2
@@ -170,7 +182,9 @@ pop_rank_raw <- read_html(url) |>
   html_table(header = TRUE) %>%            # scrapes all tables      
   .[[1]] %>%                              # selects the first table
   as_tibble(.name_repair = "unique") |>   # fixes empty column names
-  clean_names()                           # oleans to snake_case      
+  clean_names()                           # cleans to snake_case 
+
+pop_rank_raw
 ```
 
 ## Part 2: Clean and standardize the data
@@ -200,6 +214,7 @@ pop_rank_2 <- pop_rank_raw |>
     pct_ec_2020 = percent_ec_2020
     
   )
+pop_rank_2
 ```
 
 ## Part 3: Correct column classes
@@ -216,6 +231,7 @@ pop_rank_3 <- pop_rank_2 |>
                rank = as.integer(rank),
                across(3:10, ~ parse_number(.x))
   )
+pop_rank_3
 ```
 
 ## Part 4: Handle missing values
@@ -225,13 +241,12 @@ pop_rank_3 <- pop_rank_2 |>
 When i looked at the tibble, there were no similar placeholders, but just to be safe i run the following script to convert any place holders with with `NA`.
 
 ```{r}
-
-
 pop_rank_4 <- pop_rank_3 |> 
   # Replace common placeholder strings with true R NAs across your character columns
   mutate(across(where(is.character), ~ na_if(.x, "-"))) %>%
   mutate(across(where(is.character), ~ na_if(.x, "N/A"))) %>%
   mutate(across(where(is.character), ~ na_if(.x, "")))
+pop_rank_4
 ```
 
 ## Part 5: Final verification
@@ -254,5 +269,5 @@ print(total_rows)
 pop_rank_tidy <- pop_rank_4 |> 
   slice(-(57:60))
 
-
+pop_rank_tidy
 ```

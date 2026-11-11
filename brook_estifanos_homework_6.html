@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Assignment 4 Web Scraping</title>
+<title>brook_estifanos_hw_web_scraping</title>
 <style>
 
 span.smallcaps{font-variant: small-caps;}
@@ -2210,7 +2210,7 @@ vertical-align: -.125em;
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Assignment 4 Web Scraping</h1>
+<h1 class="title">brook_estifanos_hw_web_scraping</h1>
 </div>
 
 
@@ -2229,21 +2229,20 @@ vertical-align: -.125em;
 
 <section id="section-1" class="level1">
 <h1>Section 1</h1>
-<section id="background" class="level2">
-<h2 class="anchored" data-anchor-id="background">Background</h2>
-<p>The U.S. Census Bureau’s 1990 API endpoint is currently offline. To access 1990 Decennial data, we must pivot from <code>tidycensus</code> to the <strong>IPUMS NHGIS</strong> API using the <code>{ipumsr}</code> package.</p>
-<section id="part-1-authentication" class="level3">
-<h3 class="anchored" data-anchor-id="part-1-authentication">Part 1: Authentication</h3>
-<p><strong>Task:</strong> Register at <a href="https://uma.pop.umn.edu/nhgis/user/new">nhgis.org</a>, generate an API key at <a href="https://account.ipums.org">account.ipums.org</a>, and set it in your R environment.</p>
+<section id="part-1-authentication" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-authentication">Part 1: Authentication</h2>
+<section id="explanation" class="level3">
+<h3 class="anchored" data-anchor-id="explanation">Explanation</h3>
+<p>I registered at <a href="https://uma.pop.umn.edu/nhgis/user/new">nhgis.org</a> and generated an API key at <a href="https://account.ipums.org">account.ipums.org</a>. I then set it in my R environ and assigned it a key name for later use.</p>
 <div class="cell" data-layout-align="center">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the package into the session</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load the package into the session</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ipumsr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Set API key </span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#set API key </span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">use_git_ignore</span>(<span class="st">&quot;.Renviron&quot;</span>)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#Retrieve the key in R </span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#retrieve the key in R </span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ipums_key <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">&quot;IPUMS_API_KEY&quot;</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#check whether R found it, run:</span></span>
@@ -2254,27 +2253,16 @@ vertical-align: -.125em;
 </div>
 </div>
 </section>
-<section id="part-2-the-data-challenge" class="level3">
-<h3 class="anchored" data-anchor-id="part-2-the-data-challenge">Part 2: The Data Challenge</h3>
-<p>Your goal is to extract 1990 State Population Status (Table NP1) data for all States.</p>
-<ul>
-<li><p>To figure out which tables and variables you need, you use the <a href="https://data2.nhgis.org/">NHGIS Data Finder</a> on the web. The API codes (like NH4 or NP1) correspond directly to the labels and categories you select in that interface.</p></li>
-<li><p>To find the data from the <a href="https://data2.nhgis.org/">NHGIS Data Finder</a>. Log into your account, then Filter Geographic level by STATE, YEARS by 1990 and TOPICS total population, the select the DATA, TABLE NAME, NP1, YEAR-DATASET, 1990_STF1</p></li>
-</ul>
-<section id="essential-functions-reference" class="level4">
-<h4 class="anchored" data-anchor-id="essential-functions-reference">Essential Functions Reference</h4>
-<p>To complete this, you will need to utilize these key functions from the <code>{ipumsr}</code> package:</p>
-<ul>
-<li><p><code>define_extract_agg()</code>: Defines which dataset, table, and geography you want.</p></li>
-<li><p><code>submit_extract()</code>: Sends your request to the IPUMS servers.</p></li>
-<li><p><code>wait_for_extract()</code>: Pauses R until the IPUMS server finishes building your file.</p></li>
-<li><p><code>download_extract()</code>: Downloads the completed ZIP file to your computer.</p></li>
-<li><p><code>read_nhgis()</code>: Loads the downloaded data into a data frame.</p></li>
-</ul>
+</section>
+<section id="part-2-the-data-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-the-data-challenge">Part 2: The Data Challenge</h2>
+<section id="explanation-1" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-1">Explanation</h3>
+<p>I used the <a href="https://data2.nhgis.org/">NHGIS Data Finder</a> to locate and verify that the desired table <strong>NP1</strong> in the <strong>1990_STF1 data set</strong>. I first downloaded an initial zip using the websites filtering options to look at what kind of data I should expect. I then used the provided <strong>IPUMS</strong> functions to download and read the file directly into R as a data frame.</p>
 <div class="cell" data-layout-align="center">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: extract-data</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Define function</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#define function</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>extract_state_pop_status <span class="ot">&lt;-</span> <span class="fu">define_extract_agg</span>(</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">collection =</span> <span class="st">&quot;nhgis&quot;</span>,</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">description =</span> <span class="st">&quot;1990 State Total Population (NP1)&quot;</span>,</span>
@@ -2285,12 +2273,12 @@ vertical-align: -.125em;
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Submit</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#submit</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>submit_extract <span class="ot">&lt;-</span> <span class="fu">submit_extract</span>(extract_state_pop_status)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Successfully submitted IPUMS NHGIS extract number 4</code></pre>
+<pre><code>Successfully submitted IPUMS NHGIS extract number 8</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Wait &amp; Download extract</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#wait &amp; download extract</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>wait_extract <span class="ot">&lt;-</span> <span class="fu">wait_for_extract</span>(submit_extract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Checking extract status...</code></pre>
@@ -2308,7 +2296,7 @@ vertical-align: -.125em;
 <pre><code>Checking extract status...</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>IPUMS NHGIS extract 4 is ready to download.</code></pre>
+<pre><code>IPUMS NHGIS extract 8 is ready to download.</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>download_file <span class="ot">&lt;-</span> <span class="fu">download_extract</span>(wait_extract)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -2319,10 +2307,10 @@ vertical-align: -.125em;
   |======================================================================| 100%</code></pre>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>Data file saved to C:/Users/estif/OneDrive/Documents/Data613/homework/homework_6/nhgis0004_csv.zip</code></pre>
+<pre><code>Data file saved to C:/Users/estif/OneDrive/Documents/Data613/homework/homework_6/nhgis0008_csv.zip</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Read Zip into a data fram</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>state_pop_data <span class="ot">&lt;-</span> <span class="fu">read_nhgis</span>(download_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#read Zip into a data frame</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>raw_state_pop <span class="ot">&lt;-</span> <span class="fu">read_nhgis</span>(download_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: `read_nhgis()` was deprecated in ipumsr 0.9.0.
 ℹ Please use `read_ipums_agg()` instead.</code></pre>
@@ -2341,77 +2329,396 @@ lgl (23): ANRCA, AIANHHA, RES_ONLYA, TRUSTA, AIANCC, RES_TRSTA, BLOCKA, BLCK...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>raw_state_pop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 51 × 38
+   GISJOIN  YEAR STUSAB ANRCA AIANHHA RES_ONLYA TRUSTA AIANCC RES_TRSTA BLOCKA
+   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;  &lt;lgl&gt; &lt;lgl&gt;   &lt;lgl&gt;     &lt;lgl&gt;  &lt;lgl&gt;  &lt;lgl&gt;     &lt;lgl&gt; 
+ 1 G010     1990 AL     NA    NA      NA        NA     NA     NA        NA    
+ 2 G020     1990 AK     NA    NA      NA        NA     NA     NA        NA    
+ 3 G040     1990 AZ     NA    NA      NA        NA     NA     NA        NA    
+ 4 G050     1990 AR     NA    NA      NA        NA     NA     NA        NA    
+ 5 G060     1990 CA     NA    NA      NA        NA     NA     NA        NA    
+ 6 G080     1990 CO     NA    NA      NA        NA     NA     NA        NA    
+ 7 G090     1990 CT     NA    NA      NA        NA     NA     NA        NA    
+ 8 G100     1990 DE     NA    NA      NA        NA     NA     NA        NA    
+ 9 G110     1990 DC     NA    NA      NA        NA     NA     NA        NA    
+10 G120     1990 FL     NA    NA      NA        NA     NA     NA        NA    
+# ℹ 41 more rows
+# ℹ 28 more variables: BLCK_GRPA &lt;lgl&gt;, TRACTA &lt;lgl&gt;, CD101A &lt;lgl&gt;,
+#   C_CITYA &lt;lgl&gt;, CMSA &lt;lgl&gt;, COUNTYA &lt;lgl&gt;, CTY_SUBA &lt;lgl&gt;, COUSUBCC &lt;lgl&gt;,
+#   DIVISIONA &lt;dbl&gt;, MSA_CMSAA &lt;lgl&gt;, PLACEA &lt;lgl&gt;, PLACECC &lt;lgl&gt;,
+#   PLACEDC &lt;lgl&gt;, PMSAA &lt;lgl&gt;, REGIONA &lt;dbl&gt;, STATE &lt;chr&gt;, STATEA &lt;chr&gt;,
+#   URBRURALA &lt;lgl&gt;, URB_AREAA &lt;lgl&gt;, CD103A &lt;lgl&gt;, AREALAND &lt;chr&gt;,
+#   AREAWAT &lt;chr&gt;, ANPSADPI &lt;chr&gt;, FUNCSTAT &lt;chr&gt;, INTPTLAT &lt;dbl&gt;, …</code></pre>
+</div>
 </div>
 </section>
 </section>
-<section id="part-3-data-cleaning" class="level3">
-<h3 class="anchored" data-anchor-id="part-3-data-cleaning">Part 3: Data Cleaning</h3>
-<p>Using the metadata discovered via `<code>ipums_var_info()</code>.</p>
-<p>Rename and the select variables</p>
-<ul>
-<li><p>gisjoin = GISJOIN,</p></li>
-<li><p>year = YEAR,</p></li>
-<li><p>state_abbr = STUSAB,</p></li>
-<li><p>division = DIVISIONA,</p></li>
-<li><p>region = REGIONA,</p></li>
-<li><p>state_name = STATE,</p></li>
-<li><p>state_code = STATEA,</p></li>
-<li><p>land_area = AREALAND,</p></li>
-<li><p>water_area = AREAWAT,</p></li>
-<li><p>total_pop = ET1001</p></li>
-</ul>
+<section id="part-3-data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="part-3-data-cleaning">Part 3: Data Cleaning</h2>
+<section id="explanation-2" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-2">Explanation</h3>
+<p>I used <strong>dplyr</strong> functions <strong>select</strong> and <strong>rename</strong> to clean the data. I noticed that several columns only had NAs and columns 33 through 37 were not used. So i used that information to write my select arguments.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use var info to check var names</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ipums_var_info</span>(raw_state_pop)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 38 × 4
+   var_name  var_label                                       var_desc val_labels
+   &lt;chr&gt;     &lt;chr&gt;                                           &lt;chr&gt;    &lt;list&gt;    
+ 1 GISJOIN   GIS Join Match Code                             &quot;&quot;       &lt;tibble&gt;  
+ 2 YEAR      Data File Year                                  &quot;&quot;       &lt;tibble&gt;  
+ 3 STUSAB    State/US Abbreviation                           &quot;&quot;       &lt;tibble&gt;  
+ 4 ANRCA     Alaska Native Regional Corporation Code         &quot;&quot;       &lt;tibble&gt;  
+ 5 AIANHHA   American Indian Area/Alaska Native Area/Hawaii… &quot;&quot;       &lt;tibble&gt;  
+ 6 RES_ONLYA American Indian Reservation [excluding trust l… &quot;&quot;       &lt;tibble&gt;  
+ 7 TRUSTA    American Indian Reservation [trust lands only]… &quot;&quot;       &lt;tibble&gt;  
+ 8 AIANCC    American Indian/Alaska Native Area Class Code   &quot;&quot;       &lt;tibble&gt;  
+ 9 RES_TRSTA Reservation/Trust Lands Code                    &quot;&quot;       &lt;tibble&gt;  
+10 BLOCKA    Block Code                                      &quot;&quot;       &lt;tibble&gt;  
+# ℹ 28 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select and rename</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>tidy_state_pop <span class="ot">&lt;-</span> raw_state_pop <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span> <span class="sc">!</span><span class="fu">anyNA</span>(.x)), <span class="sc">-</span>(<span class="dv">33</span><span class="sc">:</span><span class="dv">37</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>                    <span class="fu">rename</span>(<span class="at">gisjoin =</span> GISJOIN,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">year =</span> YEAR,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">state_abbr =</span> STUSAB,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">division =</span> DIVISIONA,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>                           <span class="at">region =</span> REGIONA,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>                           <span class="at">state_name =</span> STATE,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>                           <span class="at">state_code =</span> STATEA,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>                           <span class="at">land_area =</span> AREALAND,</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>                           <span class="at">water_area =</span> AREAWAT,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>                           <span class="at">total_pop =</span> ET1001)</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>tidy_state_pop</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 51 × 10
+   gisjoin  year state_abbr division region state_name      state_code land_area
+   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;           &lt;chr&gt;      &lt;chr&gt;    
+ 1 G010     1990 AL                6      3 Alabama         01         01314431…
+ 2 G020     1990 AK                9      4 Alaska          02         14772675…
+ 3 G040     1990 AZ                8      4 Arizona         04         02943333…
+ 4 G050     1990 AR                7      3 Arkansas        05         01348750…
+ 5 G060     1990 CA                9      4 California      06         04039706…
+ 6 G080     1990 CO                8      4 Colorado        08         02686576…
+ 7 G090     1990 CT                1      1 Connecticut     09         00125495…
+ 8 G100     1990 DE                5      3 Delaware        10         00050624…
+ 9 G110     1990 DC                5      3 District Of Co… 11         00001590…
+10 G120     1990 FL                5      3 Florida         12         01398529…
+# ℹ 41 more rows
+# ℹ 2 more variables: water_area &lt;chr&gt;, total_pop &lt;dbl&gt;</code></pre>
+</div>
+</div>
 </section>
-<section id="part-4-find-the-population-density" class="level3">
-<h3 class="anchored" data-anchor-id="part-4-find-the-population-density">Part 4: Find the population density</h3>
-<p>population density = total population/ land area</p>
 </section>
-<section id="part-5-find-water-share" class="level3">
-<h3 class="anchored" data-anchor-id="part-5-find-water-share">Part 5: Find Water Share</h3>
-<p>water share = water area /(land area + water area)</p>
-<section id="tips-for-students" class="level4">
-<h4 class="anchored" data-anchor-id="tips-for-students">Tips for Students</h4>
-<ul>
-<li><p><strong>The Wait:</strong> Remind them that <code>wait_for_extract()</code> is a “blocking” function; R will show a “busy” icon while IPUMS processes the request.</p></li>
-<li><p><strong>The Metadata:</strong> They should use the <a href="https://www.nhgis.org">NHGIS Data Finder</a> to verify that Table <strong>NP1</strong> belongs to the <strong>1990_STF1</strong> (Summary Tape File 1) dataset.</p></li>
-</ul>
+<section id="part-4-find-the-population-density" class="level2">
+<h2 class="anchored" data-anchor-id="part-4-find-the-population-density">Part 4: Find the population density</h2>
+<section id="explanation-3" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-3">Explanation</h3>
+<p>I used <strong>dplyr</strong> function <strong>mutate</strong> and <strong>the provided formula</strong> to calculate population density, but I needed to convert the land_area column into numeric first.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use mutate to calculate population density, land_area convereted to numeric </span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>state_density <span class="ot">&lt;-</span> tidy_state_pop <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">mutate</span>(<span class="at">land_area =</span> <span class="fu">as.numeric</span>(land_area), </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">pop_density =</span> total_pop <span class="sc">/</span>land_area)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                  </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>state_density <span class="sc">|&gt;</span> <span class="fu">select</span>(year, </span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                        state_name, </span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>                        land_area, </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>                        total_pop, </span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>                        pop_density) <span class="sc">|&gt;</span> </span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>                  <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 5
+    year state_name            land_area total_pop pop_density
+   &lt;dbl&gt; &lt;chr&gt;                     &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+ 1  1990 Alabama               131443117   4040587    0.0307  
+ 2  1990 Alaska               1477267515    550043    0.000372
+ 3  1990 Arizona               294333362   3665228    0.0125  
+ 4  1990 Arkansas              134875069   2350725    0.0174  
+ 5  1990 California            403970679  29760021    0.0737  
+ 6  1990 Colorado              268657691   3294394    0.0123  
+ 7  1990 Connecticut            12549571   3287116    0.262   
+ 8  1990 Delaware                5062455    666168    0.132   
+ 9  1990 District Of Columbia     159055    606900    3.82    
+10  1990 Florida               139852965  12937926    0.0925  </code></pre>
+</div>
+</div>
 </section>
+</section>
+<section id="part-5-find-water-share" class="level2">
+<h2 class="anchored" data-anchor-id="part-5-find-water-share">Part 5: Find Water Share</h2>
+<section id="explanation-4" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-4">Explanation</h3>
+<p>I used <strong>dplyr</strong> function <strong>mutate</strong> and <strong>the provided formula</strong> to calculate water_share, but I needed to convert the water_area column into numeric first.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">#use mutate to calculate water share, water_area convereted to numeric </span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>water_share <span class="ot">&lt;-</span> state_density <span class="sc">|&gt;</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">mutate</span>(</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                  <span class="at">water_area =</span> <span class="fu">as.numeric</span>(water_area), </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">water_share =</span> (water_area)<span class="sc">/</span>(land_area <span class="sc">+</span> water_area)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>water_share <span class="sc">|&gt;</span> <span class="fu">select</span>(year, </span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>                        state_name, </span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>                        land_area, </span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>                        water_area, </span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>                        water_share) <span class="sc">|&gt;</span> </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>                <span class="fu">head</span>(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 5
+    year state_name            land_area water_area water_share
+   &lt;dbl&gt; &lt;chr&gt;                     &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt;
+ 1  1990 Alabama               131443117    4332265     0.0319 
+ 2  1990 Alaska               1477267515  222870598     0.131  
+ 3  1990 Arizona               294333362     942772     0.00319
+ 4  1990 Arkansas              134875069    2867313     0.0208 
+ 5  1990 California            403970679   20031222     0.0472 
+ 6  1990 Colorado              268657691     960363     0.00356
+ 7  1990 Connecticut            12549571    1808456     0.126  
+ 8  1990 Delaware                5062455    1385020     0.215  
+ 9  1990 District Of Columbia     159055      17991     0.102  
+10  1990 Florida               139852965   30461000     0.179  </code></pre>
+</div>
+</div>
 </section>
 </section>
 </section>
 <section id="section-2" class="level1">
 <h1>Section 2</h1>
-<section id="problem" class="level2">
-<h2 class="anchored" data-anchor-id="problem">Problem:</h2>
-<p>Go to the following page <a href="https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population">List of U.S. states and territories by population</a> and select the table <code>State and territory rankings</code>. Your assignment is clear, well‑structured, and absolutely appropriate for an introductory web‑scraping task in R. It checks all the essential boxes: selecting the right table, cleaning column names, fixing data types, and handling missing values. If anything, I’d say it’s a solid foundation — the kind of exercise that teaches practical, real‑world scraping skills without overwhelming you.</p>
-<p>That said, you can make it slightly more precise and a bit more “data‑science‑ready.” Here’s how I’d refine it:</p>
-<ol type="1">
-<li><p>Import the table into R</p>
-<ul>
-<li><p>Use <code>rvest</code> to scrape the table.</p></li>
-<li><p>Ensure you select the correct table (the page contains multiple tables).</p></li>
-</ul></li>
-<li><p>Clean and standardize the data</p>
-<ul>
-<li><p>Fix column names so they are syntactically valid and descriptive (e.g., using <code>janitor::clean_names()</code>).</p></li>
-<li><p>Ensure the first row is treated as column headers, not data.</p></li>
-</ul></li>
-<li><p>Correct column classes</p>
-<ul>
-<li><p>Convert numeric columns to numeric (they often import as character because of commas or symbols).</p></li>
-<li><p>Convert rank columns to integers.</p></li>
-<li><p>Convert state/territory names to character.</p></li>
-</ul></li>
-<li><p>Handle missing values</p>
-<ul>
-<li>Replace any <code>&quot;—&quot;</code> or <code>&quot;__&quot;</code> or similar placeholders with <code>NA</code>.</li>
-</ul></li>
-<li><p>(Optional but useful)</p>
-<ul>
-<li><p>Remove commas from numbers.</p></li>
-<li><p>Check for duplicated rows.</p></li>
-<li><p>Verify that the number of rows matches the number of U.S. states + territories.</p></li>
-</ul></li>
-</ol>
+<section id="part-1-scrape-data" class="level2">
+<h2 class="anchored" data-anchor-id="part-1-scrape-data">Part 1 : Scrape data</h2>
+<section id="explanation-5" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-5">Explanation</h3>
+<p>I used <strong>rvest</strong> to scrape the data and <strong>janitor</strong> to do initial cleaning of names. However more cleaning was needed in step 2 because the first raw was still data and not header. I was also surprised my preferred piping method <code>|&gt;</code> did not work for selecting the first table but <code>%&gt;%</code> did. If though reverting to <code>%&gt;%</code> worked this time, I will read more about when to use each one to make sure</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load library</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: &#39;janitor&#39;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    chisq.test, fisher.test</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">#define url</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">&quot;https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population&quot;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>pop_rank_raw <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url) <span class="sc">|&gt;</span> </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_table</span>(<span class="at">header =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span>            <span class="co"># scrapes all tables      </span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  .[[<span class="dv">1</span>]] <span class="sc">%&gt;%</span>                              <span class="co"># selects the first table</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">.name_repair =</span> <span class="st">&quot;unique&quot;</span>) <span class="sc">|&gt;</span>   <span class="co"># fixes empty column names</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>()                           <span class="co"># cleans to snake_case </span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>New names:
+• `` -&gt; `...1`
+• `Census population[8][9][a]` -&gt; `Census population[8][9][a]...3`
+• `Census population[8][9][a]` -&gt; `Census population[8][9][a]...4`
+• `House seats[b]` -&gt; `House seats[b]...5`
+• `House seats[b]` -&gt; `House seats[b]...6`</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>pop_rank_raw</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 61 × 10
+   x1    state_or_territory census_population_8_9_a_3 census_population_8_9_a_4
+   &lt;chr&gt; &lt;chr&gt;              &lt;chr&gt;                     &lt;chr&gt;                    
+ 1 &quot;&quot;    State or territory July 1, 2025 (est.)       April 1, 2020            
+ 2 &quot;1&quot;   California         39,355,309                39,538,223               
+ 3 &quot;2&quot;   Texas              31,709,821                29,145,505               
+ 4 &quot;3&quot;   Florida            23,462,518                21,538,187               
+ 5 &quot;4&quot;   New York           20,002,427                20,201,249               
+ 6 &quot;5&quot;   Pennsylvania       13,059,432                13,002,700               
+ 7 &quot;6&quot;   Illinois           12,719,141                12,812,508               
+ 8 &quot;7&quot;   Ohio               11,900,510                11,799,448               
+ 9 &quot;8&quot;   Georgia            11,302,748                10,711,908               
+10 &quot;9&quot;   North Carolina     11,197,968                10,439,388               
+# ℹ 51 more rows
+# ℹ 6 more variables: house_seats_b_5 &lt;chr&gt;, house_seats_b_6 &lt;chr&gt;,
+#   pop_perelec_vote_2020_c &lt;chr&gt;, pop_perseat_2020_a &lt;chr&gt;,
+#   percent_us_2020 &lt;chr&gt;, percent_ec_2020 &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="part-2-clean-and-standardize-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="part-2-clean-and-standardize-the-data">Part 2: Clean and standardize the data</h2>
+<section id="explanation-6" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-6">Explanation</h3>
+<p>I used <strong>slice</strong> to remove the first raw and referenced the column names generated by <strong>colnames()</strong> to rename the variables into descriptive names.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#look up colnames for reference</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(pop_rank_raw)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] &quot;x1&quot;                        &quot;state_or_territory&quot;       
+ [3] &quot;census_population_8_9_a_3&quot; &quot;census_population_8_9_a_4&quot;
+ [5] &quot;house_seats_b_5&quot;           &quot;house_seats_b_6&quot;          
+ [7] &quot;pop_perelec_vote_2020_c&quot;   &quot;pop_perseat_2020_a&quot;       
+ [9] &quot;percent_us_2020&quot;           &quot;percent_ec_2020&quot;          </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># remove first raw and rename columns</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>pop_rank_2 <span class="ot">&lt;-</span> pop_rank_raw <span class="sc">|&gt;</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span> (</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">rank =</span> x1, </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">state =</span> state_or_territory,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_pop_2025 =</span> census_population_8_9_a_3,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_pop_2020 =</span> census_population_8_9_a_4,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">house_seats =</span> house_seats_b_5, </span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_seats =</span> house_seats_b_6, </span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_per_seat_2020 =</span> pop_perseat_2020_a, </span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">pop_per_ev_2020 =</span> pop_perelec_vote_2020_c, </span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_us_pop_2020 =</span>  percent_us_2020, </span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">pct_ec_2020 =</span> percent_ec_2020</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>pop_rank_2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 60 × 10
+   rank  state          total_pop_2025 total_pop_2020 house_seats pct_seats
+   &lt;chr&gt; &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt;          &lt;chr&gt;       &lt;chr&gt;    
+ 1 1     California     39,355,309     39,538,223     52          11.95%   
+ 2 2     Texas          31,709,821     29,145,505     38          8.74%    
+ 3 3     Florida        23,462,518     21,538,187     28          6.44%    
+ 4 4     New York       20,002,427     20,201,249     26          5.98%    
+ 5 5     Pennsylvania   13,059,432     13,002,700     17          3.91%    
+ 6 6     Illinois       12,719,141     12,812,508     17          3.91%    
+ 7 7     Ohio           11,900,510     11,799,448     15          3.45%    
+ 8 8     Georgia        11,302,748     10,711,908     14          3.22%    
+ 9 9     North Carolina 11,197,968     10,439,388     14          3.22%    
+10 10    Michigan       10,127,884     10,077,331     13          2.99%    
+# ℹ 50 more rows
+# ℹ 4 more variables: pop_per_ev_2020 &lt;chr&gt;, pop_per_seat_2020 &lt;chr&gt;,
+#   pct_us_pop_2020 &lt;chr&gt;, pct_ec_2020 &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="part-3-correct-column-classes" class="level2">
+<h2 class="anchored" data-anchor-id="part-3-correct-column-classes">Part 3: Correct column classes</h2>
+<section id="explanation-7" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-7">Explanation</h3>
+<p>I used <strong>mutate</strong> to to change the class of rank to integer and all the other variables except for <strong>state</strong> name to numeric. State was already character class and it needed to stay that way. <strong>parse_number</strong> does a nice job of <strong>removing commas</strong> and <strong>percentage signs</strong> as it converts the characters to numerical values.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># covert rank to integer and all but the state names as numeric.</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>pop_rank_3 <span class="ot">&lt;-</span> pop_rank_2 <span class="sc">|&gt;</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">rank =</span> <span class="fu">as.integer</span>(rank),</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>               <span class="fu">across</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">10</span>, <span class="sc">~</span> <span class="fu">parse_number</span>(.x))</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 6 warnings in `mutate()`.
+The first warning was:
+ℹ In argument: `rank = as.integer(rank)`.
+Caused by warning:
+! NAs introduced by coercion
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 5 remaining warnings.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>pop_rank_3</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 60 × 10
+    rank state          total_pop_2025 total_pop_2020 house_seats pct_seats
+   &lt;int&gt; &lt;chr&gt;                   &lt;dbl&gt;          &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+ 1     1 California           39355309       39538223          52     12.0 
+ 2     2 Texas                31709821       29145505          38      8.74
+ 3     3 Florida              23462518       21538187          28      6.44
+ 4     4 New York             20002427       20201249          26      5.98
+ 5     5 Pennsylvania         13059432       13002700          17      3.91
+ 6     6 Illinois             12719141       12812508          17      3.91
+ 7     7 Ohio                 11900510       11799448          15      3.45
+ 8     8 Georgia              11302748       10711908          14      3.22
+ 9     9 North Carolina       11197968       10439388          14      3.22
+10    10 Michigan             10127884       10077331          13      2.99
+# ℹ 50 more rows
+# ℹ 4 more variables: pop_per_ev_2020 &lt;dbl&gt;, pop_per_seat_2020 &lt;dbl&gt;,
+#   pct_us_pop_2020 &lt;dbl&gt;, pct_ec_2020 &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="part-4-handle-missing-values" class="level2">
+<h2 class="anchored" data-anchor-id="part-4-handle-missing-values">Part 4: Handle missing values</h2>
+<section id="explanation-8" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-8">Explanation</h3>
+<p>When i looked at the tibble, there were no similar placeholders, but just to be safe i run the following script to convert any place holders with with <code>NA</code>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>pop_rank_4 <span class="ot">&lt;-</span> pop_rank_3 <span class="sc">|&gt;</span> </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Replace common placeholder strings with true R NAs across your character columns</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">&quot;-&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">&quot;N/A&quot;</span>))) <span class="sc">%&gt;%</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">&quot;&quot;</span>)))</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>pop_rank_4</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 60 × 10
+    rank state          total_pop_2025 total_pop_2020 house_seats pct_seats
+   &lt;int&gt; &lt;chr&gt;                   &lt;dbl&gt;          &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+ 1     1 California           39355309       39538223          52     12.0 
+ 2     2 Texas                31709821       29145505          38      8.74
+ 3     3 Florida              23462518       21538187          28      6.44
+ 4     4 New York             20002427       20201249          26      5.98
+ 5     5 Pennsylvania         13059432       13002700          17      3.91
+ 6     6 Illinois             12719141       12812508          17      3.91
+ 7     7 Ohio                 11900510       11799448          15      3.45
+ 8     8 Georgia              11302748       10711908          14      3.22
+ 9     9 North Carolina       11197968       10439388          14      3.22
+10    10 Michigan             10127884       10077331          13      2.99
+# ℹ 50 more rows
+# ℹ 4 more variables: pop_per_ev_2020 &lt;dbl&gt;, pop_per_seat_2020 &lt;dbl&gt;,
+#   pct_us_pop_2020 &lt;dbl&gt;, pct_ec_2020 &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="part-5-final-verification" class="level2">
+<h2 class="anchored" data-anchor-id="part-5-final-verification">Part 5: Final verification</h2>
+<section id="explanation-9" class="level3">
+<h3 class="anchored" data-anchor-id="explanation-9">Explanation</h3>
+<p>I checked for duplicated rows and the number of rows matches the number of U.S. states + territories. I removed the last 4 rows because they were not particular state or territory data but aggregate.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co">#find any completely identical duplicate rows</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>duplicated_rows <span class="ot">&lt;-</span> pop_rank_4 <span class="sc">|&gt;</span> </span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_dupes</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No variable names specified - using all columns.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>No duplicate combinations found of: rank, state, total_pop_2025, total_pop_2020, house_seats, pct_seats, pop_per_ev_2020, pop_per_seat_2020, pct_us_pop_2020, pct_ec_2020</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check total number of rows</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>total_rows <span class="ot">&lt;-</span> <span class="fu">nrow</span>( pop_rank_4)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(total_rows)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 60</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remove last 4 rows that are not US state or territory</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>pop_rank_tidy <span class="ot">&lt;-</span> pop_rank_4 <span class="sc">|&gt;</span> </span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span>(<span class="dv">57</span><span class="sc">:</span><span class="dv">60</span>))</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>pop_rank_tidy</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 56 × 10
+    rank state          total_pop_2025 total_pop_2020 house_seats pct_seats
+   &lt;int&gt; &lt;chr&gt;                   &lt;dbl&gt;          &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;
+ 1     1 California           39355309       39538223          52     12.0 
+ 2     2 Texas                31709821       29145505          38      8.74
+ 3     3 Florida              23462518       21538187          28      6.44
+ 4     4 New York             20002427       20201249          26      5.98
+ 5     5 Pennsylvania         13059432       13002700          17      3.91
+ 6     6 Illinois             12719141       12812508          17      3.91
+ 7     7 Ohio                 11900510       11799448          15      3.45
+ 8     8 Georgia              11302748       10711908          14      3.22
+ 9     9 North Carolina       11197968       10439388          14      3.22
+10    10 Michigan             10127884       10077331          13      2.99
+# ℹ 46 more rows
+# ℹ 4 more variables: pop_per_ev_2020 &lt;dbl&gt;, pop_per_seat_2020 &lt;dbl&gt;,
+#   pct_us_pop_2020 &lt;dbl&gt;, pct_ec_2020 &lt;dbl&gt;</code></pre>
+</div>
+</div>
+</section>
 </section>
 </section>
 
