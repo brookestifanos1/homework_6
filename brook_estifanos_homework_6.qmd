@@ -21,6 +21,9 @@ if (!require("pacman")) install.packages("pacman")
 if (!requireNamespace("ipumsr", quietly = TRUE))
   install.packages("ipumsr")
 
+if (!requireNamespace("janitor", quietly = TRUE))
+  install.packages("janitor")
+
 # Load contributed packages with pacman
 pacman::p_load(rvest,  tidyverse, xml2)
 ```
@@ -38,14 +41,14 @@ The U.S. Census Bureau's 1990 API endpoint is currently offline. To access 1990 
 ```{r}
 #| message: false
 
-# Load the package into the session
+#load the package into the session
 library(ipumsr)
 
-# Set API key 
+#set API key 
 usethis::use_git_ignore(".Renviron")
 usethis::edit_r_environ()
 
-#Retrieve the key in R 
+#retrieve the key in R 
 ipums_key <- Sys.getenv("IPUMS_API_KEY")
 
 #check whether R found it, run:
@@ -81,7 +84,7 @@ To complete this, you will need to utilize these key functions from the `{ipumsr
 
 #| label: extract-data
 
-# 1. Define function
+#define function
 extract_state_pop_status <- define_extract_agg(
   collection = "nhgis",
   description = "1990 State Total Population (NP1)",
@@ -92,15 +95,15 @@ extract_state_pop_status <- define_extract_agg(
   )
 )
 
-# 2. Submit
+#submit
 submit_extract <- submit_extract(extract_state_pop_status)
 
 
-# 3. Wait & Download extract
+#wait & download extract
 wait_extract <- wait_for_extract(submit_extract)
 download_file <- download_extract(wait_extract)
 
-# 4. Read Zip into a data frame
+#read Zip into a data frame
 raw_state_pop <- read_nhgis(download_file)
 
 ```
@@ -136,7 +139,6 @@ Rename and the select variables
 ipums_var_info(state_pop_data)
 
 #select and rename
-
 tidy_state_pop <- raw_state_pop |> 
                     select(where(~ !anyNA(.x)), -(33:37)) |> 
                     rename(gisjoin = GISJOIN,
@@ -158,7 +160,6 @@ population density = total population/ land area
 ```{r}
 
 #use mutate to calculate population density, land_area convereted to numeric 
-
 state_density <- tidy_state_pop |>
                   mutate(land_area = as.numeric(land_area), 
                     pop_density = total_pop /land_area)
@@ -205,7 +206,24 @@ That said, you can make it slightly more precise and a bit more “data‑scienc
 
     - Fix column names so they are syntactically valid and descriptive (e.g., using `janitor::clean_names()`).
 
-    - Ensure the first row is treated as column headers, not data.
+    - Ensure the first row is treated as column headers, not data
+
+    ```{r}
+
+    #load library
+    library(rvest)
+    library(janitor)
+
+    #define url
+    url <- "https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population"
+
+
+    pop_rank_raw <- read_html(url) |> 
+      html_table(header = TRUE) %>%            # scrapes all tables      
+      .[[1]] %>%                              # selects the first table
+      as_tibble(.name_repair = "unique") |>   # fixes empty column names
+      clean_names()                           # coleans to snake_case      
+    ```
 
 3.  Correct column classes
 
