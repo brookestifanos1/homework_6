@@ -1,5 +1,5 @@
 ---
-title: "Assignment 4 Web Scraping"
+title: "brook_estifanos_hw_web_scraping"
 format:
   html:
     self-contained: true
@@ -30,13 +30,11 @@ pacman::p_load(rvest,  tidyverse, xml2)
 
 # Section 1
 
-## Background
+## Part 1: Authentication
 
-The U.S. Census Bureau's 1990 API endpoint is currently offline. To access 1990 Decennial data, we must pivot from `tidycensus` to the **IPUMS NHGIS** API using the `{ipumsr}` package.
+### Explanation
 
-### Part 1: Authentication
-
-**Task:** Register at [nhgis.org](https://uma.pop.umn.edu/nhgis/user/new), generate an API key at [account.ipums.org](https://account.ipums.org), and set it in your R environment.
+I registered at [nhgis.org](https://uma.pop.umn.edu/nhgis/user/new) and generated an API key at [account.ipums.org](https://account.ipums.org). I then set it in my R environ and assigned it a key name for later use.
 
 ```{r}
 #| message: false
@@ -58,27 +56,11 @@ ipums_key != ""
 
 ```
 
-### Part 2: The Data Challenge
+## Part 2: The Data Challenge
 
-Your goal is to extract 1990 State Population Status (Table NP1) data for all States.
+### Explanation
 
-- To figure out which tables and variables you need, you use the [NHGIS Data Finder](https://data2.nhgis.org/) on the web. The API codes (like NH4 or NP1) correspond directly to the labels and categories you select in that interface.
-
-- To find the data from the [NHGIS Data Finder](https://data2.nhgis.org/). Log into your account, then Filter Geographic level by STATE, YEARS by 1990 and TOPICS total population, the select the DATA, TABLE NAME, NP1, YEAR-DATASET, 1990_STF1
-
-#### Essential Functions Reference
-
-To complete this, you will need to utilize these key functions from the `{ipumsr}` package:
-
-- `define_extract_agg()`: Defines which dataset, table, and geography you want.
-
-- `submit_extract()`: Sends your request to the IPUMS servers.
-
-- `wait_for_extract()`: Pauses R until the IPUMS server finishes building your file.
-
-- `download_extract()`: Downloads the completed ZIP file to your computer.
-
-- `read_nhgis()`: Loads the downloaded data into a data frame.
+I used the [NHGIS Data Finder](https://data2.nhgis.org/) to locate and verify that the desired table **NP1** in the **1990_STF1 data set**. I first downloaded an initial zip using the websites filtering options to look at what kind of data I should expect. I then used the provided **IPUMS** functions to download and read the file directly into R as a data frame.
 
 ```{r}
 
@@ -108,31 +90,11 @@ raw_state_pop <- read_nhgis(download_file)
 
 ```
 
-### Part 3: Data Cleaning
+## Part 3: Data Cleaning
 
-Using the metadata discovered via \``ipums_var_info()`.
+### Explanation
 
-Rename and the select variables
-
-- gisjoin = GISJOIN,
-
-- year = YEAR,
-
-- state_abbr = STUSAB,
-
-- division = DIVISIONA,
-
-- region = REGIONA,
-
-- state_name = STATE,
-
-- state_code = STATEA,
-
-- land_area = AREALAND,
-
-- water_area = AREAWAT,
-
-- total_pop = ET1001
+I used **dplyr** functions **select** and **rename** to clean the data. I noticed that several columns only had NAs and columns 33 through 37 were not used. So i used that information to write my select arguments.
 
 ```{r}
 # use var info to check var names
@@ -153,9 +115,11 @@ tidy_state_pop <- raw_state_pop |>
                            total_pop = ET1001)
 ```
 
-### Part 4: Find the population density
+## Part 4: Find the population density
 
-population density = total population/ land area
+### Explanation
+
+I used **dplyr** function **mutate** and **the provided formula** to calculate population density, but I needed to convert the land_area column into numeric first.
 
 ```{r}
 
@@ -169,9 +133,11 @@ state_density <- tidy_state_pop |>
 
 ```
 
-### Part 5: Find Water Share
+## Part 5: Find Water Share
 
-water share = water area /(land area + water area)
+### Explanation
+
+I used **dplyr** function **mutate** and **the provided formula** to calculate water_share, but I needed to convert the water_area column into numeric first.
 
 ```{r}
 #use mutate to calculate water share, water_area convereted to numeric 
@@ -182,125 +148,111 @@ water_share <- state_density |>
                 )
 ```
 
-#### Tips for Students
-
-- **The Wait:** Remind them that `wait_for_extract()` is a "blocking" function; R will show a "busy" icon while IPUMS processes the request.
-
-- **The Metadata:** They should use the [NHGIS Data Finder](https://www.nhgis.org) to verify that Table **NP1** belongs to the **1990_STF1** (Summary Tape File 1) dataset.
-
 # Section 2
 
-## Problem:
+## Part 1 : Scrape data
 
-Go to the following page [List of U.S. states and territories by population](https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population) and select the table `State and territory rankings`. Your assignment is clear, well‑structured, and absolutely appropriate for an introductory web‑scraping task in R. It checks all the essential boxes: selecting the right table, cleaning column names, fixing data types, and handling missing values. If anything, I’d say it’s a solid foundation — the kind of exercise that teaches practical, real‑world scraping skills without overwhelming you.
+### Explanation
 
-That said, you can make it slightly more precise and a bit more “data‑science‑ready.” Here’s how I’d refine it:
+I used **rvest** to scrape the data and **janitor** to do initial cleaning of names. However more cleaning was needed in step 2 because the first raw was still data and not header. I was also surprised my preferred piping method `|>` did not work for selecting the first table but `%>%` did. If though reverting to `%>%` worked this time, I will read more about when to use each one to make sure
 
-1.  Import the table into R
+```{r}
 
-    - Use `rvest` to scrape the table.
+#load library
+library(rvest)
+library(janitor)
 
-    - Ensure you select the correct table (the page contains multiple tables).
-
-    ```{r}
-
-    #load library
-    library(rvest)
-    library(janitor)
-
-    #define url
-    url <- "https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population"
+#define url
+url <- "https://en.wikipedia.org/wiki/List_of_U.S._states_and_territories_by_population"
 
 
-    pop_rank_raw <- read_html(url) |> 
-      html_table(header = TRUE) %>%            # scrapes all tables      
-      .[[1]] %>%                              # selects the first table
-      as_tibble(.name_repair = "unique") |>   # fixes empty column names
-      clean_names()                           # oleans to snake_case      
-    ```
+pop_rank_raw <- read_html(url) |> 
+  html_table(header = TRUE) %>%            # scrapes all tables      
+  .[[1]] %>%                              # selects the first table
+  as_tibble(.name_repair = "unique") |>   # fixes empty column names
+  clean_names()                           # oleans to snake_case      
+```
 
-2.  Clean and standardize the data
+## Part 2: Clean and standardize the data
 
-    - Fix column names so they are syntactically valid and descriptive (e.g., using `janitor::clean_names()`).
+### Explanation
 
-    - Ensure the first row is treated as column headers, not data
+I used **slice** to remove the first raw and referenced the column names generated by **colnames()** to rename the variables into descriptive names.
 
-    ```{r}
+```{r}
 
-    #look up colnames for reference
-    colnames(pop_rank_raw)
+#look up colnames for reference
+colnames(pop_rank_raw)
 
-    # remove first raw and rename columns
-    pop_rank_2 <- pop_rank_raw |> 
-      slice(-1) |> 
-      rename (
-        rank = x1, 
-        state = state_or_territory,
-        total_pop_2025 = census_population_8_9_a_3,
-        total_pop_2020 = census_population_8_9_a_4,
-        house_seats = house_seats_b_5, 
-        pct_seats = house_seats_b_6, 
-        pop_per_seat_2020 = pop_perseat_2020_a, 
-        pop_per_ev_2020 = pop_perelec_vote_2020_c, 
-        pct_us_pop_2020 =  percent_us_2020, 
-        pct_ec_2020 = percent_ec_2020
-        
-      )
-    ```
+# remove first raw and rename columns
+pop_rank_2 <- pop_rank_raw |> 
+  slice(-1) |> 
+  rename (
+    rank = x1, 
+    state = state_or_territory,
+    total_pop_2025 = census_population_8_9_a_3,
+    total_pop_2020 = census_population_8_9_a_4,
+    house_seats = house_seats_b_5, 
+    pct_seats = house_seats_b_6, 
+    pop_per_seat_2020 = pop_perseat_2020_a, 
+    pop_per_ev_2020 = pop_perelec_vote_2020_c, 
+    pct_us_pop_2020 =  percent_us_2020, 
+    pct_ec_2020 = percent_ec_2020
+    
+  )
+```
 
-3.  Correct column classes
+## Part 3: Correct column classes
 
-    - Convert numeric columns to numeric (they often import as character because of commas or symbols).
+### Explanation
 
-    - Convert rank columns to integers.
+I used **mutate** to to change the class of rank to integer and all the other variables except for **state** name to numeric. State was already character class and it needed to stay that way. **parse_number** does a nice job of **removing commas** and **percentage signs** as it converts the characters to numerical values.
 
-    - Convert state/territory names to character.
+```{r}
 
-    ```{r}
+# covert rank to integer and all but the state names as numeric.
+pop_rank_3 <- pop_rank_2 |> 
+              mutate(
+               rank = as.integer(rank),
+               across(3:10, ~ parse_number(.x))
+  )
+```
 
-    # covert rank to integer and all but the state names as numeric.
-    pop_rank_3 <- pop_rank_2 |> 
-                  mutate(
-                   rank = as.integer(rank),
-                   across(3:10, ~ parse_number(.x))
-      )
-    ```
+## Part 4: Handle missing values
 
-4.  Handle missing values
+### Explanation
 
-    - Replace any `"—"` or `"__"` or similar placeholders with `NA`.
+When i looked at the tibble, there were no similar placeholders, but just to be safe i run the following script to convert any place holders with with `NA`.
 
-    ```{r}
-
-
-    pop_rank_4 <- pop_rank_3 |> 
-      # Replace common placeholder strings with true R NAs across your character columns
-      mutate(across(where(is.character), ~ na_if(.x, "-"))) %>%
-      mutate(across(where(is.character), ~ na_if(.x, "N/A"))) %>%
-      mutate(across(where(is.character), ~ na_if(.x, "")))
-    ```
-
-5.  (Optional but useful)
-
-    - Remove commas from numbers.
-
-    - Check for duplicated rows.
-
-    - Verify that the number of rows matches the number of U.S. states + territories
-
-    ```{r}
-
-    #find any completely identical duplicate rows
-    duplicated_rows <- pop_rank_4 |> 
-      get_dupes()
-
-    # check total number of rows
-    total_rows <- nrow( pop_rank_4)
-    print(total_rows)
-
-    #remove last 4 raws that are not US state or territory
-    pop_rank_tidy <- pop_rank_4 |> 
-      slice(-(57:60))
+```{r}
 
 
-    ```
+pop_rank_4 <- pop_rank_3 |> 
+  # Replace common placeholder strings with true R NAs across your character columns
+  mutate(across(where(is.character), ~ na_if(.x, "-"))) %>%
+  mutate(across(where(is.character), ~ na_if(.x, "N/A"))) %>%
+  mutate(across(where(is.character), ~ na_if(.x, "")))
+```
+
+## Part 5: Final verification
+
+### Explanation
+
+I checked for duplicated rows and the number of rows matches the number of U.S. states + territories. I removed the last 4 rows because they were not particular state or territory data but aggregate.
+
+```{r}
+
+#find any completely identical duplicate rows
+duplicated_rows <- pop_rank_4 |> 
+  get_dupes()
+
+# check total number of rows
+total_rows <- nrow( pop_rank_4)
+print(total_rows)
+
+#remove last 4 rows that are not US state or territory
+pop_rank_tidy <- pop_rank_4 |> 
+  slice(-(57:60))
+
+
+```
